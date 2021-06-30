@@ -2,9 +2,11 @@
 1. yarn create react-app latmeask --template typescript
 2. yarn add firebase
 3. yarn add node-sass@^5.0.0
+4. yarn add react-router-dom
+5. yarn add @types/react-router-dom -D
 
 
-27min
+1:16min
    
 
 # Process
