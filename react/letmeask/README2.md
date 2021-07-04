@@ -7,6 +7,8 @@
 
 
 1:14 min 03
+
+parte do deploy aula 05 -  30 min 
    
 
 # Process
