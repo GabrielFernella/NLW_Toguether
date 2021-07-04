@@ -1,6 +1,7 @@
-import { useParams } from 'react-router-dom';
+import { useHistory, useParams } from 'react-router-dom';
 
 import logoImg from '../assets/images/logo.svg';
+import deleteImg from '../assets/images/delete.svg';
 
 import { RoomCode } from '../components/RoomCode';
 import { Button } from '../components/Button';
@@ -18,35 +19,23 @@ type RoomParams = {
 
 export function AdminRoom() {
   const { user } = useAuth();
+  const history = useHistory();
   const params = useParams<RoomParams>();
   const roomId = params.id;
   const { title, questions } = useRoom(roomId);
 
-  const [newQuestion, setNewQuestion] = useState('');
+  async function handleEndRoom() {
+    await database.ref(`rooms/${roomId}`).update({
+      endedAt: new Date(),
+    });
 
-  async function handleSendQuestion(event: FormEvent) {
-    event.preventDefault();
-    if (newQuestion.trim() === '') {
-      return;
+    history.push('/');
+  }
+
+  async function handleDeleteQuestion(questionId: string) {
+    if (window.confirm('Tem certeza que deseja excluir esta pergunta?')) {
+      await database.ref(`rooms/${roomId}/questions/${questionId}`).remove();
     }
-
-    if (!user) {
-      throw new Error('You must be logged in');
-    }
-
-    const question = {
-      content: newQuestion,
-      author: {
-        name: user.name,
-        avatar: user.avatar,
-      },
-      isHighlighted: false,
-      isAnswered: false,
-    };
-
-    await database.ref(`rooms/${roomId}/questions`).push(question);
-
-    setNewQuestion('');
   }
 
   return (
@@ -57,7 +46,9 @@ export function AdminRoom() {
           <div>
             <RoomCode code={roomId} />
 
-            <Button isOutlined>Encerrar sala</Button>
+            <Button isOutlined onClick={handleEndRoom}>
+              Encerrar sala
+            </Button>
           </div>
         </div>
       </header>
@@ -71,7 +62,11 @@ export function AdminRoom() {
         <div className="question-list">
           {questions.map((question) => {
             return (
-              <Question key={question.id} content={question.content} author={question.author} />
+              <Question key={question.id} content={question.content} author={question.author}>
+                <button type="button" onClick={() => handleDeleteQuestion(question.id)}>
+                  <img src={deleteImg} alt="Remover pergunta" />
+                </button>
+              </Question>
             );
           })}
         </div>
