@@ -6,7 +6,7 @@
 5. yarn add @types/react-router-dom -D
 
 
-0:4min 03
+1:14 min 03
    
 
 # Process
